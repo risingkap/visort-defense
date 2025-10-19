@@ -1,8 +1,4 @@
-# Frontend Environment Variables (.env)
-# Copy this to visort-last/frontend/.env
+# Frontend Environment Variables for Vercel
+# Add these in your Vercel project settings
 
-# API URL - Update this after deploying backend to Railway
-REACT_APP_API_URL=https://your-backend-url.railway.app
-
-# For local development, use:
-# REACT_APP_API_URL=http://localhost:5000
+REACT_APP_API_URL=https://your-backend.railway.app

@@ -4,7 +4,7 @@
   "description": "AI-powered waste classification system backend with TensorFlow.js",
   "main": "visort-last/backend/server.js",
   "scripts": {
-    "start": "cd visort-last/backend && npm install && node ./server.js"
+    "start": "cd visort-last/backend && npm install && node server.js"
   },
   "engines": {
     "node": ">=18.0.0"

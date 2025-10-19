@@ -1,48 +1,41 @@
+#!/bin/bash
 # ViSort-Defense Deployment Guide
 
-## 🎯 Deployment Strategy
-- **Frontend**: Vercel (React App)
-- **Backend**: Railway (Node.js + Express)
-- **Database**: MongoDB Atlas
-- **Model**: TensorFlow.js (Client-side + Server-side)
+echo "🚀 ViSort-Defense Deployment Guide 🚀"
+echo "======================================"
+echo ""
 
-## 📁 Project Structure
-```
-ViSort-Defense/
-├── frontend/          # React App (→ Vercel)
-├── backend/           # Node.js API (→ Railway)
-├── model/             # TensorFlow.js Model
-└── deployment/        # Deployment configs
-```
+echo "📋 DEPLOYMENT STATUS:"
+echo "✅ Backend: Railway (https://your-backend.railway.app)"
+echo "⏳ Frontend: Deploy to Vercel"
+echo ""
 
-## 🔧 Environment Variables Needed
+echo "🎯 FRONTEND DEPLOYMENT (Vercel):"
+echo "1. Go to https://vercel.com"
+echo "2. Sign up with GitHub account (risingkap)"
+echo "3. Click 'New Project'"
+echo "4. Select repository: risingkap/visort-defense"
+echo "5. Set Root Directory: visort-last/frontend"
+echo "6. Add Environment Variable:"
+echo "   REACT_APP_API_URL=https://your-backend.railway.app"
+echo "7. Deploy!"
+echo ""
 
-### Frontend (.env)
-```
-REACT_APP_API_URL=https://your-backend-url.railway.app
-```
+echo "🔧 BACKEND DEPLOYMENT (Railway):"
+echo "1. Go to https://railway.app"
+echo "2. Sign up with GitHub account (risingkap)"
+echo "3. Click 'New Project' → 'Deploy from GitHub repo'"
+echo "4. Select repository: risingkap/visort-defense"
+echo "5. Add Environment Variables:"
+echo "   NODE_ENV=production"
+echo "   MONGODB_URI=your_mongodb_connection_string"
+echo "6. Deploy!"
+echo ""
 
-### Backend (.env)
-```
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/visort
-PORT=5000
-NODE_ENV=production
-```
+echo "📊 FINAL RESULT:"
+echo "Frontend: https://your-frontend.vercel.app"
+echo "Backend API: https://your-backend.railway.app/api"
+echo "TensorFlow Model: https://your-backend.railway.app/model"
+echo ""
 
-## 📋 Deployment Checklist
-- [ ] GitHub repository setup
-- [ ] Environment variables configured
-- [ ] Model files optimized
-- [ ] Frontend deployed to Vercel
-- [ ] Backend deployed to Railway
-- [ ] MongoDB Atlas database setup
-- [ ] Domain configuration
-- [ ] SSL certificates
-- [ ] Performance optimization
-
-## 🚀 Next Steps
-1. Set up GitHub repository
-2. Configure environment variables
-3. Deploy backend to Railway
-4. Deploy frontend to Vercel
-5. Test end-to-end functionality
+echo "🎉 Your AI waste classification system will be live!"
