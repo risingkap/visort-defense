@@ -1,11 +1,15 @@
 # Railway deployment configuration
-# This file tells Railway how to deploy your backend
+# Deploy both frontend and backend together
 
-# Build command
-build: cd visort-last/backend && npm install
+[build]
+builder = "nixpacks"
 
-# Start command  
-start: cd visort-last/backend && npm start
+[deploy]
+startCommand = "npm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
 
-# Health check
-healthcheck: curl -f http://localhost:$PORT/api/health || exit 1
+[env]
+NODE_ENV = "production"
+PORT = "$PORT"
