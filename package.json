@@ -2,9 +2,9 @@
   "name": "visort-defense-backend",
   "version": "1.0.0",
   "description": "AI-powered waste classification system backend with TensorFlow.js",
-  "main": "visort-last/backend/server.js",
+  "main": "server.js",
   "scripts": {
-    "start": "cd visort-last/backend && npm install && node server.js"
+    "start": "npm install && node server.js"
   },
   "engines": {
     "node": ">=18.0.0"
