@@ -1,0 +1,11 @@
+# Railway deployment configuration
+# This file tells Railway how to deploy your backend
+
+# Build command
+build: cd visort-last/backend && npm install
+
+# Start command  
+start: cd visort-last/backend && npm start
+
+# Health check
+healthcheck: curl -f http://localhost:$PORT/api/health || exit 1
