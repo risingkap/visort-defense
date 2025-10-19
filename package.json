@@ -1,17 +1,15 @@
 {
-  "name": "visort-defense",
+  "name": "visort-defense-backend",
   "version": "1.0.0",
-  "description": "AI-powered waste classification system with TensorFlow.js",
+  "description": "AI-powered waste classification system backend with TensorFlow.js",
   "main": "visort-last/backend/server.js",
   "scripts": {
-    "build": "cd visort-last/frontend && npm install && npm run build",
-    "start": "cd visort-last/backend && npm install && npm start",
-    "dev": "concurrently \"cd visort-last/frontend && npm start\" \"cd visort-last/backend && npm start\""
+    "start": "cd visort-last/backend && npm install && npm start"
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["ai", "waste-classification", "tensorflow", "react", "nodejs"],
+  "keywords": ["ai", "waste-classification", "tensorflow", "nodejs", "backend"],
   "author": "risingkap",
   "license": "MIT"
 }
