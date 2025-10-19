@@ -1,11 +1,8 @@
-# Railway deployment configuration
-# Deploy both frontend and backend together
-
 [build]
 builder = "nixpacks"
 
 [deploy]
-startCommand = "npm start"
+startCommand = "cd visort-last/backend && npm start"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"

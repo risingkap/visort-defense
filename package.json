@@ -1,11 +1,8 @@
-# Railway Deployment Configuration
-# This will deploy both frontend and backend together
-
-# Root package.json for Railway
 {
   "name": "visort-defense",
   "version": "1.0.0",
   "description": "AI-powered waste classification system with TensorFlow.js",
+  "main": "visort-last/backend/server.js",
   "scripts": {
     "build": "cd visort-last/frontend && npm install && npm run build",
     "start": "cd visort-last/backend && npm install && npm start",
