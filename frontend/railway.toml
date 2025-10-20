@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "npm run build && npm start"
+startCommand = "npm run build && ./node_modules/.bin/serve -s build -l $PORT"
 restartPolicyType = "on_failure"
 
 [env]
