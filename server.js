@@ -280,6 +280,15 @@ setInterval(() => {
 // Authentication Endpoints
 // ======================
 
+// Handle preflight OPTIONS requests for login endpoint
+app.options('/api/auth/login', (req, res) => {
+  res.header('Access-Control-Allow-Origin', 'https://ingenious-warmth-production-c767.up.railway.app');
+  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
+
 // POST /api/auth/login - User Login
 app.post('/api/auth/login', async (req, res) => {
   try {
