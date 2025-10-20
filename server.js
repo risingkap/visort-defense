@@ -202,10 +202,15 @@ app.use(helmet({
   },
 }));
 app.use(cors({
-  origin: true, // Allow all origins for development
+  origin: [
+    'https://ingenious-warmth-production-c767.up.railway.app',
+    'http://localhost:3000',
+    /\.up\.railway\.app$/ // Allow all Railway domains
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10kb' }));
@@ -2776,9 +2781,16 @@ if (process.env.NODE_ENV === 'production') {
 const PORT = process.env.PORT || 5000;
 
 // Start the server immediately
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
-  console.log('All endpoints are now available');
+try {
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
+    console.log('✅ All endpoints are now available');
+  });
+
+  server.on('error', (err) => {
+    console.error('❌ Server startup error:', err);
+    process.exit(1);
+  });
   
   // Start health monitoring
   setInterval(logHealthCheck, 30000); // Check every 30 seconds
@@ -2792,7 +2804,11 @@ app.listen(PORT, '0.0.0.0', () => {
       console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
     }
   }, 60000); // Cleanup every minute
-});
+  
+} catch (err) {
+  console.error('❌ Failed to start server:', err);
+  process.exit(1);
+}
 
 // Handle database setup in background
 (async () => {
