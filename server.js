@@ -1,7 +1,12 @@
 require('dotenv').config();
 const express = require('express'); 
 const cors = require('cors');
-const tf = require('@tensorflow/tfjs-node');
+let tf = null;
+try {
+  tf = require('@tensorflow/tfjs-node');
+} catch (err) {
+  console.warn('TensorFlow native not available, ML features disabled:', err.message);
+}
 const { connectToDatabase } = require('./db');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -11,7 +16,15 @@ const { MongoServerError, ObjectId } = require('mongodb');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
-const { createCanvas, loadImage } = require('canvas');
+let createCanvas;
+let loadImage;
+try {
+  const canvasLib = require('canvas');
+  createCanvas = canvasLib.createCanvas;
+  loadImage = canvasLib.loadImage;
+} catch (err) {
+  console.warn('Canvas not available, image processing disabled:', err.message);
+}
 const { logHealthCheck } = require('./health-check');
 
 const app = express();
@@ -539,6 +552,10 @@ console.log("🔧 Starting server initialization...");
 
 // Define the model loading function
 const loadModel = async () => {
+  if (!tf) {
+    console.warn('TensorFlow not available; skipping model loading.');
+    return;
+  }
   try {
     console.log("🚀 MODEL LOADER: Starting...");
     
@@ -2826,11 +2843,23 @@ try {
   
   // Memory cleanup for TensorFlow
   setInterval(() => {
-    if (typeof tf !== 'undefined' && tf.memory) {
-      console.log('🧹 TensorFlow memory cleanup...');
-      tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
-      tf.disposeVariables();
-      console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
+    if (tf && typeof tf.memory === 'function') {
+      try {
+        console.log('🧹 TensorFlow memory cleanup...');
+        const mem = tf.memory();
+        if (mem && typeof mem.numTensors === 'number') {
+          console.log(`Tensors before cleanup: ${mem.numTensors}`);
+        }
+        if (typeof tf.disposeVariables === 'function') {
+          tf.disposeVariables();
+        }
+        const after = tf.memory();
+        if (after && typeof after.numTensors === 'number') {
+          console.log(`Tensors after cleanup: ${after.numTensors}`);
+        }
+      } catch (e) {
+        console.warn('TensorFlow cleanup skipped:', e.message);
+      }
     }
   }, 60000); // Cleanup every minute
   
