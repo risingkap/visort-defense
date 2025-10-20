@@ -2775,10 +2775,32 @@ if (process.env.NODE_ENV === 'production') {
 // ======================
 const PORT = process.env.PORT || 5000;
 
+// Start the server immediately
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
+  console.log('All endpoints are now available');
+  
+  // Start health monitoring
+  setInterval(logHealthCheck, 30000); // Check every 30 seconds
+  
+  // Memory cleanup for TensorFlow
+  setInterval(() => {
+    if (typeof tf !== 'undefined' && tf.memory) {
+      console.log('🧹 TensorFlow memory cleanup...');
+      tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
+      tf.disposeVariables();
+      console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
+    }
+  }, 60000); // Cleanup every minute
+});
+
+// Handle database setup in background
 (async () => {
   try {
-    db = await connectToDatabase();
-    console.log('Database connection established');
+    if (!db) {
+      db = await connectToDatabase();
+      console.log('Database connection established');
+    }
     
     // Create indexes
     await db.collection('disposalHistory').createIndex({ disposalDate: -1 });
@@ -2825,26 +2847,10 @@ const PORT = process.env.PORT || 5000;
     });
     await db.collection('ComplianceReports').createIndex({ date: -1 });
 
-    app.listen(PORT, '0.0.0.0', () => {
-      console.log(`Server running on http://0.0.0.0:${PORT}`);
-      console.log('All endpoints are now available');
-      
-      // Start health monitoring
-      setInterval(logHealthCheck, 30000); // Check every 30 seconds
-      
-      // Memory cleanup for TensorFlow
-      setInterval(() => {
-        if (typeof tf !== 'undefined' && tf.memory) {
-          console.log('🧹 TensorFlow memory cleanup...');
-          tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
-          tf.disposeVariables();
-          console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
-        }
-      }, 60000); // Cleanup every minute
-    });
+    console.log('Database indexes created successfully');
 
   } catch (err) {
-    console.error('Server startup failed:', err);
-    process.exit(1);
+    console.error('Database setup failed:', err);
+    // Don't exit - server is already running
   }
 })();
