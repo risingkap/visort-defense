@@ -224,8 +224,18 @@ const corsOptions = {
 // Apply CORS middleware globally
 app.use(cors(corsOptions));
 
-// Keep preflight handling
-app.options('*', cors(corsOptions));
+// Handle preflight OPTIONS requests with middleware (compatible with Express 5.x)
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Origin', req.headers.origin || corsOptions.origin[0]);
+    res.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
+    res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
+    res.header('Access-Control-Allow-Credentials', corsOptions.credentials.toString());
+    res.status(corsOptions.optionsSuccessStatus || 200).end();
+  } else {
+    next();
+  }
+});
 
 
 
