@@ -201,19 +201,33 @@ app.use(helmet({
     },
   },
 }));
-app.use(cors({
+
+const corsOptions = {
   origin: [
     'https://ingenious-warmth-production-c767.up.railway.app',
     'http://localhost:3000',
-    /\.up\.railway\.app$/ // Allow all Railway domains
+    'http://localhost:3001'
   ],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // For legacy browser support
-}));
-app.use(morgan('dev'));
-app.use(express.json({ limit: '10kb' }));
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'Accept',
+    'Origin',
+    'X-Requested-With',
+    'X-CSRF-Token'
+  ],
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS middleware globally
+app.use(cors(corsOptions));
+
+// Keep preflight handling
+app.options('*', cors(corsOptions));
+
+
 
 // Rate Limiting
 const limiter = rateLimit({
@@ -229,10 +243,13 @@ const imageLimiter = rateLimit({
   message: 'Too many image requests from this IP, please try again later'
 });
 
-// Apply strict rate limiting to all routes except images
+// Apply strict rate limiting to all routes except images and OPTIONS requests
 app.use((req, res, next) => {
   if (req.path.startsWith('/uploads/')) {
     return imageLimiter(req, res, next);
+  }
+  if (req.method === 'OPTIONS') {
+    return next(); // Skip rate limiting for preflight requests
   }
   return limiter(req, res, next);
 });
@@ -282,8 +299,8 @@ setInterval(() => {
 
 // Handle preflight OPTIONS requests for login endpoint
 app.options('/api/auth/login', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'https://ingenious-warmth-production-c767.up.railway.app');
-  res.header('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.sendStatus(200);
@@ -2770,62 +2787,18 @@ app.use((err, req, res, next) => {
 });
 
 // ======================
-// Catch-all handler for React routing (production only)
-// ======================
-if (process.env.NODE_ENV === 'production') {
-  // Use middleware approach to handle React routing - more compatible with Express 5
-  app.use((req, res, next) => {
-    // Skip API routes and static files
-    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
-      return next();
-    }
-    // Serve React app for all other routes
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-  });
-}
-
-// ======================
 // Server Startup
 // ======================
 const PORT = process.env.PORT || 5000;
 
-// Start the server immediately
-try {
-  const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server running on http://0.0.0.0:${PORT}`);
-    console.log('✅ All endpoints are now available');
-  });
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on http://0.0.0.0:${PORT}`);
+});
 
-  server.on('error', (err) => {
-    console.error('❌ Server startup error:', err);
-    process.exit(1);
-  });
-  
-  // Start health monitoring
-  setInterval(logHealthCheck, 30000); // Check every 30 seconds
-  
-  // Memory cleanup for TensorFlow
-  setInterval(() => {
-    if (typeof tf !== 'undefined' && tf.memory) {
-      console.log('🧹 TensorFlow memory cleanup...');
-      tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
-      tf.disposeVariables();
-      console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
-    }
-  }, 60000); // Cleanup every minute
-  
-} catch (err) {
-  console.error('❌ Failed to start server:', err);
-  process.exit(1);
-}
-
-// Handle database setup in background
 (async () => {
   try {
-    if (!db) {
-      db = await connectToDatabase();
-      console.log('Database connection established');
-    }
+    db = await connectToDatabase();
+    console.log('Database connection established');
     
     // Create indexes
     await db.collection('disposalHistory').createIndex({ disposalDate: -1 });
@@ -2872,10 +2845,33 @@ try {
     });
     await db.collection('ComplianceReports').createIndex({ date: -1 });
 
-    console.log('Database indexes created successfully');
+    // Catch-all handler: send back React's index.html file for any non-API routes
+    if (process.env.NODE_ENV === 'production') {
+      app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+      });
+    }
+
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log('All endpoints are now available');
+      
+      // Start health monitoring
+      setInterval(logHealthCheck, 30000); // Check every 30 seconds
+      
+      // Memory cleanup for TensorFlow
+      setInterval(() => {
+        if (typeof tf !== 'undefined' && tf.memory) {
+          console.log('🧹 TensorFlow memory cleanup...');
+          tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
+          tf.disposeVariables();
+          console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
+        }
+      }, 60000); // Cleanup every minute
+    });
 
   } catch (err) {
-    console.error('Database setup failed:', err);
-    // Don't exit - server is already running
+    console.error('Server startup failed:', err);
+    process.exit(1);
   }
 })();
