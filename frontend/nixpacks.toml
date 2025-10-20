@@ -2,7 +2,7 @@
 cmds = ["npm install"]
 
 [phases.build]
-cmds = ["npm run build"]
+cmds = ["CI=false npm run build"]
 
 [phases.start]
 cmd = "npm start"

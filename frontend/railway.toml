@@ -2,9 +2,12 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "npm run build && npm start"
+startCommand = "serve -s build -l 0.0.0.0:$PORT"
 restartPolicyType = "on_failure"
 
 [env]
 NODE_ENV = "production"
 NIXPACKS_NPM_INSTALL_CMD = "npm install"
+CI = "false"
+PUBLIC_URL = "."
+REACT_APP_API_URL = "https://visort-defense-production.up.railway.app"
