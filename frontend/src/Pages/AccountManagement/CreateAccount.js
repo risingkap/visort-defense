@@ -35,7 +35,8 @@ const CreateAccount = () => {
   const fetchAccounts = async () => {
     try {
       console.log('Attempting to fetch...'); // Debug 1
-      const response = await fetch('http://localhost:5000/api/accounts');
+      const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      const response = await fetch(`${base}/api/accounts`);
       
       console.log('Response status:', response.status); // Debug 2
       const text = await response.text();
@@ -93,7 +94,8 @@ const CreateAccount = () => {
       role: formData.role,
     };
 
-    const response = await fetch('http://localhost:5000/api/accounts', {
+    const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+    const response = await fetch(`${base}/api/accounts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

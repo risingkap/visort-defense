@@ -175,7 +175,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, onLogout }) => {
               console.log('Sidebar - Decoded token data:', decodedToken);
               
               // Fetch user data from database using the employee ID from token
-              const response = await fetch(`http://localhost:5000/api/auth/user/${decodedToken.employeeId}`, {
+              const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+              const response = await fetch(`${base}/api/auth/user/${decodedToken.employeeId}`, {
                 headers: {
                   'Authorization': `Bearer ${token}`,
                   'Content-Type': 'application/json'

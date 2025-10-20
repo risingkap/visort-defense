@@ -59,7 +59,8 @@ function LoginPage({ setIsLoggedIn }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+      const response = await fetch(`${base}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -385,7 +386,8 @@ function LoginPage({ setIsLoggedIn }) {
                     setError('');
                     try {
                       setIsSendingCode(true);
-                      const response = await fetch('http://localhost:5000/api/auth/forgot-password/send-code', {
+                      const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+                      const response = await fetch(`${base}/api/auth/forgot-password/send-code`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ employeeId: trimmedEmployeeId })
@@ -480,7 +482,8 @@ function LoginPage({ setIsLoggedIn }) {
                       setError('');
                       try {
                         setIsResetting(true);
-                        const response = await fetch('http://localhost:5000/api/auth/forgot-password/reset', {
+                        const base = process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000');
+                        const response = await fetch(`${base}/api/auth/forgot-password/reset`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({

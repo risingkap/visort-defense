@@ -64,7 +64,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
             console.log('Decoded token data:', decodedToken);
             
             // Fetch user data from database using the employee ID from token
-            const response = await fetch(`http://localhost:5000/api/auth/user/${decodedToken.employeeId}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000')}/api/auth/user/${decodedToken.employeeId}`, {
               headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

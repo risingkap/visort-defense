@@ -51,7 +51,7 @@ const ViewAccounts = ({ accounts: initialAccounts, onAccountsUpdate }) => {
         updatedData: updatedAccount
       });
 
-      const response = await fetch(`http://localhost:5000/api/accounts/${selectedAccount._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000')}/api/accounts/${selectedAccount._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedAccount)
@@ -87,7 +87,7 @@ const ViewAccounts = ({ accounts: initialAccounts, onAccountsUpdate }) => {
     try {
       if (deleteType === 'temporary') {
         // Temporarily deactivate account
-        const response = await fetch(`http://localhost:5000/api/accounts/${selectedAccount._id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000')}/api/accounts/${selectedAccount._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ isActive: false })
@@ -107,7 +107,7 @@ const ViewAccounts = ({ accounts: initialAccounts, onAccountsUpdate }) => {
         toast.success('Account deactivated successfully');
       } else {
         // Permanently delete account
-        const response = await fetch(`http://localhost:5000/api/accounts/${selectedAccount._id}`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000')}/api/accounts/${selectedAccount._id}`, {
           method: 'DELETE'
         });
 
@@ -132,7 +132,7 @@ const ViewAccounts = ({ accounts: initialAccounts, onAccountsUpdate }) => {
 
   const handleRestoreAccount = async (account) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/accounts/${account._id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || (process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000')}/api/accounts/${account._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ isActive: true })
