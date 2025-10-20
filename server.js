@@ -2811,9 +2811,9 @@ const PORT = process.env.PORT || 5000;
     await db.collection('ComplianceReports').createIndex({ date: -1 });
 
     // Catch-all handler: send back React's index.html file for any non-API routes
-    // Express 5 uses path-to-regexp v6 where plain "*" is invalid; use a splat param
+    // Express 5 (path-to-regexp v6) doesn't support "*". Use a RegExp and exclude /api routes.
     if (process.env.NODE_ENV === 'production') {
-      app.get('/:path(*)', (req, res) => {
+      app.get(/^\/(?!api\/).*/, (req, res) => {
         res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
       });
     }
