@@ -17,6 +17,34 @@ const { logHealthCheck } = require('./health-check');
 const app = express();
 
 // ======================
+// CORS - MUST BE FIRST MIDDLEWARE
+// ======================
+// Manual CORS middleware to ensure headers are set before any other middleware
+app.use((req, res, next) => {
+  console.log('CORS Middleware - Origin:', req.headers.origin, 'Method:', req.method, 'Path:', req.path);
+  
+  const origin = req.headers.origin;
+  
+  // Set CORS headers for all requests
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, X-CSRF-Token');
+  
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight request for:', req.path);
+    res.status(200).end();
+    return;
+  }
+  
+  console.log('CORS headers set, continuing to next middleware');
+  next();
+});
+
+// ======================
 // Serve Frontend Static Files (for Railway deployment)
 // ======================
 if (process.env.NODE_ENV === 'production') {
@@ -190,45 +218,6 @@ const sendAnnouncementEmails = async (announcement, recipients) => {
 // ======================
 // Middleware Setup
 // ======================
-
-// CORS must be the FIRST middleware to avoid conflicts
-const corsOptions = {
-  origin: true, // Allow all origins for now
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'Accept',
-    'Origin',
-    'X-Requested-With',
-    'X-CSRF-Token'
-  ],
-  optionsSuccessStatus: 200
-};
-
-// Manual CORS middleware to ensure headers are set before any other middleware
-app.use((req, res, next) => {
-  console.log('CORS Middleware - Origin:', req.headers.origin, 'Method:', req.method, 'Path:', req.path);
-  
-  // Set CORS headers for all requests
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, X-CSRF-Token');
-  
-  // Handle preflight OPTIONS requests
-  if (req.method === 'OPTIONS') {
-    console.log('Handling OPTIONS preflight request');
-    res.status(200).end();
-    return;
-  }
-  
-  next();
-});
-
-// Apply cors middleware as backup
-app.use(cors(corsOptions));
 
 // Then apply helmet with very permissive settings for CORS
 app.use(helmet({
