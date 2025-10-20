@@ -207,21 +207,35 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Apply CORS middleware FIRST
+// Manual CORS middleware to ensure headers are set before any other middleware
+app.use((req, res, next) => {
+  console.log('CORS Middleware - Origin:', req.headers.origin, 'Method:', req.method, 'Path:', req.path);
+  
+  // Set CORS headers for all requests
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With, X-CSRF-Token');
+  
+  // Handle preflight OPTIONS requests
+  if (req.method === 'OPTIONS') {
+    console.log('Handling OPTIONS preflight request');
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
+
+// Apply cors middleware as backup
 app.use(cors(corsOptions));
 
-// Then apply helmet with proper CORS policy
+// Then apply helmet with very permissive settings for CORS
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:5000", "https://ingenious-warmth-production-c767.up.railway.app"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      connectSrc: ["'self'", "https://visort-defense-production.up.railway.app", "https://ingenious-warmth-production-c767.up.railway.app"],
-    },
-  },
+  crossOriginEmbedderPolicy: false,
+  // Temporarily disable CSP to avoid conflicts
+  contentSecurityPolicy: false,
 }));
 
 
