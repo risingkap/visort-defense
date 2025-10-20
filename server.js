@@ -1,7 +1,12 @@
 require('dotenv').config();
 const express = require('express'); 
 const cors = require('cors');
-const tf = require('@tensorflow/tfjs-node');
+let tf = null;
+try {
+  tf = require('@tensorflow/tfjs-node');
+} catch (err) {
+  console.warn('TensorFlow native not available, ML features disabled:', err.message);
+}
 const { connectToDatabase } = require('./db');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -11,10 +16,20 @@ const { MongoServerError, ObjectId } = require('mongodb');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
-const { createCanvas, loadImage } = require('canvas');
+let createCanvas;
+let loadImage;
+try {
+  const canvasLib = require('canvas');
+  createCanvas = canvasLib.createCanvas;
+  loadImage = canvasLib.loadImage;
+} catch (err) {
+  console.warn('Canvas not available, image processing disabled:', err.message);
+}
 const { logHealthCheck } = require('./health-check');
 
 const app = express();
+// Trust first proxy (e.g., Railway) so rate limiting/IP work correctly
+app.set('trust proxy', 1);
 
 // ======================
 // Serve Frontend Static Files (for Railway deployment)
@@ -190,27 +205,50 @@ const sendAnnouncementEmails = async (announcement, recipients) => {
 // ======================
 // Middleware Setup
 // ======================
+
+// CORS configuration (allow Railway preview domains and local dev)
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || process.env.CLIENT_ORIGIN || null;
+const allowedOrigins = [
+  // Explicit production frontend
+  'https://ingenious-warmth-production-c767.up.railway.app',
+  // Local development
+  'http://localhost:3000',
+  // Allow all Railway app subdomains (CORS supports RegExp)
+  /\.up\.railway\.app$/
+];
+if (FRONTEND_ORIGIN) allowedOrigins.unshift(FRONTEND_ORIGIN);
+
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
+  optionsSuccessStatus: 200
+};
+
+// Enable CORS for all requests and handle preflight explicitly
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
+// Helmet security headers with CSP tuned for API/static hosting
+const cspConnectSrc = ["'self'", 'https://*.up.railway.app', 'http://localhost:3000'];
+const cspImgSrc = ["'self'", 'data:', 'blob:', 'https:', 'http://localhost:3000', 'https://*.up.railway.app'];
+if (FRONTEND_ORIGIN) {
+  cspConnectSrc.push(FRONTEND_ORIGIN);
+  cspImgSrc.push(FRONTEND_ORIGIN);
+}
+
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:5000"],
+      connectSrc: cspConnectSrc,
+      imgSrc: cspImgSrc,
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
     },
   },
-}));
-app.use(cors({
-  origin: [
-    'https://ingenious-warmth-production-c767.up.railway.app',
-    'http://localhost:3000',
-    /\.up\.railway\.app$/ // Allow all Railway domains
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // For legacy browser support
 }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10kb' }));
@@ -231,6 +269,10 @@ const imageLimiter = rateLimit({
 
 // Apply strict rate limiting to all routes except images
 app.use((req, res, next) => {
+  // Never rate-limit CORS preflight
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
   if (req.path.startsWith('/uploads/')) {
     return imageLimiter(req, res, next);
   }
@@ -519,6 +561,10 @@ console.log("🔧 Starting server initialization...");
 
 // Define the model loading function
 const loadModel = async () => {
+  if (!tf) {
+    console.warn('TensorFlow not available; skipping model loading.');
+    return;
+  }
   try {
     console.log("🚀 MODEL LOADER: Starting...");
     
@@ -2806,11 +2852,23 @@ try {
   
   // Memory cleanup for TensorFlow
   setInterval(() => {
-    if (typeof tf !== 'undefined' && tf.memory) {
-      console.log('🧹 TensorFlow memory cleanup...');
-      tf.memory().numTensors && console.log(`Tensors before cleanup: ${tf.memory().numTensors}`);
-      tf.disposeVariables();
-      console.log(`Tensors after cleanup: ${tf.memory().numTensors}`);
+    if (tf && typeof tf.memory === 'function') {
+      try {
+        console.log('🧹 TensorFlow memory cleanup...');
+        const mem = tf.memory();
+        if (mem && typeof mem.numTensors === 'number') {
+          console.log(`Tensors before cleanup: ${mem.numTensors}`);
+        }
+        if (typeof tf.disposeVariables === 'function') {
+          tf.disposeVariables();
+        }
+        const after = tf.memory();
+        if (after && typeof after.numTensors === 'number') {
+          console.log(`Tensors after cleanup: ${after.numTensors}`);
+        }
+      } catch (e) {
+        console.warn('TensorFlow cleanup skipped:', e.message);
+      }
     }
   }, 60000); // Cleanup every minute
   
