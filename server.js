@@ -2825,8 +2825,8 @@ const PORT = process.env.PORT || 5000;
     });
     await db.collection('ComplianceReports').createIndex({ date: -1 });
 
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://0.0.0.0:${PORT}`);
       console.log('All endpoints are now available');
       
       // Start health monitoring
