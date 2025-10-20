@@ -195,13 +195,28 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:5000"],
+      imgSrc: [
+        "'self'",
+        "data:",
+        "https://*.up.railway.app",
+        "http://localhost:3000",
+        "http://localhost:5000"
+      ],
+      // Allow API/XHR connections from approved origins
+      connectSrc: [
+        "'self'",
+        "https://ingenious-warmth-production-c767.up.railway.app",
+        "https://*.up.railway.app",
+        "http://localhost:3000"
+      ],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
     },
   },
 }));
-app.use(cors({
+
+// Reusable CORS options for app-wide and preflight handling
+const corsOptions = {
   origin: [
     'https://ingenious-warmth-production-c767.up.railway.app',
     'http://localhost:3000',
@@ -210,8 +225,12 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // For legacy browser support
-}));
+  optionsSuccessStatus: 204
+};
+
+// Enable CORS for all requests and explicitly handle preflight
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10kb' }));
 
@@ -229,8 +248,12 @@ const imageLimiter = rateLimit({
   message: 'Too many image requests from this IP, please try again later'
 });
 
-// Apply strict rate limiting to all routes except images
+// Apply strict rate limiting to all routes except images and preflight
 app.use((req, res, next) => {
+  // Never rate-limit CORS preflight
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
   if (req.path.startsWith('/uploads/')) {
     return imageLimiter(req, res, next);
   }
