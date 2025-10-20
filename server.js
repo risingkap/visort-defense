@@ -2857,7 +2857,12 @@ app.listen(PORT, '0.0.0.0', () => {
 
     // Catch-all handler: send back React's index.html file for any non-API routes
     if (process.env.NODE_ENV === 'production') {
-      app.get('*', (req, res) => {
+      app.use((req, res, next) => {
+        // Skip API routes
+        if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+          return next();
+        }
+        // Serve React app for all other routes
         res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
       });
     }
