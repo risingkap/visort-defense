@@ -1,0 +1,157 @@
+/* WasteLogManagement.css - Compact */
+.waste-log-management-container {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.waste-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.waste-log-management-title {
+  text-align: left;
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.waste-report-tabs {
+  display: flex;
+  margin-bottom: 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  outline: none;
+  font-weight: bold;
+  color: #777;
+  border-bottom: 2px solid transparent;
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
+  margin-right: 8px;
+}
+
+.tab-button.active {
+  color: #294B29;
+  border-bottom-color: #294B29;
+}
+
+.tab-button:hover {
+  color: #333;
+}
+
+.waste-cards-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.waste-cards-grid.flex-wrap {
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+/* Ultra Compact Space-Optimized Descriptive Analysis */
+.waste-analysis {
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 0.375rem;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.waste-analysis::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.waste-analysis h3 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  color: #1f2937;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.waste-analysis .bg-white {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 0.375rem;
+  padding: 0.375rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.waste-analysis .grid {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.waste-analysis .grid > div {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+.waste-analysis .bg-gray-50 {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.waste-analysis .bg-gray-50:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+.waste-analysis .bg-gradient-to-r {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+  border: 1px solid #c7d2fe;
+  border-radius: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .waste-log-management-container {
+    padding: 12px;
+  }
+  
+  .waste-log-management-title {
+    font-size: 1.125rem;
+  }
+  
+  .waste-analysis {
+    padding: 0.375rem;
+  }
+  
+  .waste-analysis h3 {
+    font-size: 0.7rem;
+  }
+  
+  .waste-analysis .grid > div {
+    font-size: 0.7rem;
+  }
+  
+  .waste-analysis .grid {
+    gap: 0.25rem;
+  }
+}

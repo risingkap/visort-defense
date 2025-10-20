@@ -1,0 +1,462 @@
+/* ComplianceReportModule.css */
+
+.compliance-report-module-container {
+    padding: 20px;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .compliance-report-module-container h2 {
+    font-weight: bold;
+  }
+  
+  .compliance-report-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #ddd;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #ccc transparent; /* Firefox */
+  }
+  
+  
+  .tab-button {
+    background: none;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    font-weight: bold;
+    color: #777;
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+  }
+  
+  .tab-button.active {
+    color: #294B29;
+    border-bottom-color: #294B29;
+  }
+  
+  .tab-button:hover {
+    color: #333;
+  }
+  
+  .add-report-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+  }
+  
+  .add-report-button {
+    background-color: #2E7D32;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-report-button:hover {
+    background-color: #0db915;
+  }
+  
+  .add-report-button svg {
+    vertical-align: middle;
+    margin-right: 5px;
+  }
+  
+  .compliance-report-listing {
+    margin-top: 0;
+    overflow-x: auto;
+  }
+  
+  .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  .report-table thead {
+    background-color: #294B29;
+    color: white;
+  }
+  
+  .report-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .report-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e8f5e9;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+  
+  .report-table thead th:nth-child(4),
+  .report-table thead th:nth-child(5),
+  .report-table thead th:nth-child(6) {
+    text-align: center;
+  }
+  
+  .report-table td.status-cell,
+  .report-table td.date-cell,
+  .report-table td.time-cell {
+    text-align: center;
+  }
+  
+  .report-table td:first-child,
+  .report-table td:nth-child(2),
+  .report-table td:nth-child(3),
+  .report-table td:last-child {
+    text-align: left;
+  }
+  
+  .report-table tbody tr:nth-child(even) {
+    background-color: #f1f8e9;
+  }
+  
+  .report-icon {
+    font-size: 1.25rem;
+    color: #294B29;
+  }
+  
+  .actions-column button {
+    margin-right: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #a5d6a7;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    background-color: white;
+    color: #294B29;
+    line-height: 1;
+  }
+  
+  .actions-column button:hover {
+    background-color: #e0f2e7;
+  }
+  
+  .actions-column svg {
+    vertical-align: middle;
+  }
+  
+  .send-button {
+    background-color: #43A047;
+    color: white;
+    border-color: #43A047;
+  }
+  
+  .send-button:hover {
+    background-color: #388E3C;
+    border-color: #388E3C;
+  }
+  
+  .edit-button {
+    background-color: #FDD835;
+    color: #294B29;
+    border-color: #FDD835;
+  }
+  
+  .edit-button:hover {
+    background-color: #FBC02D;
+    border-color: #FBC02D;
+  }
+  
+  .delete-button {
+    background-color: #E57373;
+    color: white;
+    border-color: #E57373;
+  }
+  
+  .delete-button:hover {
+    background-color: #D32F2F;
+    border-color: #D32F2F;
+  }
+  
+  .delete-button.permanent {
+    background-color: #d32f2f;
+    color: white;
+    border-color: #d32f2f;
+  }
+  
+  .delete-button.permanent:hover {
+    background-color: #c62828;
+    border-color: #c62828;
+  }
+  
+  .status-sent,
+  .status-draft {}
+  
+  
+  .compliance-report-data-section {
+    margin-top: 30px;
+  }
+  
+  .compliance-report-data-section h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #294B29;
+  }
+  
+  .report-data-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Change to 3 columns */
+    gap: 1.25rem;
+  }
+  
+  .report-data-card {
+    background-color: white;
+    border: 1px solid #A5D6A7;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .card-icon-container {
+    background-color: #E8F5E9;
+    color: #294B29;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .card-icon {
+    font-size: 1.5rem;
+  }
+  
+  .report-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .report-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #2E7D32;
+    margin-bottom: 0.25rem;
+  }
+  
+  .report-datetime {
+    font-size: 0.75rem;
+    color: #43A047;
+    margin-bottom: 0.5rem;
+  }
+  
+  .report-description {
+    margin: 0;
+    color: #294B29;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  .add-report-form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  
+  .add-report-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    width: 95%;
+    max-width: 800px; /* Increased max-width */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-20px);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+  
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .add-report-form h3 {
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: bold; /* Make title bold */
+    color: #2c3e50;
+    text-align: center;
+  }
+  
+  .edit-report-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    width: 95%;
+    max-width: 800px; /* Increased max-width */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-20px);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .delete-form {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    width: 95%;
+    max-width: 400px; /* Make it slimmer */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-20px);
+    animation: slideIn 0.3s ease-out forwards;
+    opacity: 0;
+  }
+  
+  .delete-form h3{
+    color: #2c3e50;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  
+  .add-report-form .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .add-report-form label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95rem;
+  }
+  
+  .add-report-form input[type="text"],
+  .add-report-form input[type="date"],
+  .add-report-form input[type="time"],
+  .add-report-form textarea,
+  .add-report-form select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #d3d3d3;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+  }
+  
+  .add-report-form input[type="text"]:focus,
+  .add-report-form input[type="date"]:focus,
+  .add-report-form input[type="time"]:focus,
+  .add-report-form textarea:focus,
+  .add-report-form select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+  }
+  
+  .add-report-form textarea {
+    resize: vertical;
+    height: 120px;
+  }
+  
+  .add-report-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    margin-top: 2rem;
+  }
+  
+  .add-report-form .form-actions button {
+    padding: 0.8rem 1.8rem;
+    border-radius: 0.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .add-report-form .form-actions button:hover {
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+  
+  .add-report-form .form-actions button.cancel-button {
+    background-color: #e0e0e0;
+    color: #333;
+  }
+  
+  .add-report-form .form-actions button.cancel-button:hover {
+    background-color: #bdc3c7;
+  }
+  
+  .add-report-form .form-actions button.submit-button {
+    background-color: #00b14a;
+    color: white;
+  }
+  
+  .add-report-form .form-actions button.submit-button:hover {
+    background-color: #00e25e;
+  }
+  
+  @media (max-width: 768px) {
+    .add-report-form {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  
+    .report-data-cards-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .report-table th,
+    .report-table td {
+      padding: 0.8rem;
+    }
+  }
+
+  .compliance-report-tabs::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .compliance-report-tabs::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .compliance-report-tabs::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+  }
+  
