@@ -45,6 +45,12 @@ app.use((req, res, next) => {
 });
 
 // ======================
+// Body Parsing Middleware - MUST BE AFTER CORS
+// ======================
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// ======================
 // Serve Frontend Static Files (for Railway deployment)
 // ======================
 if (process.env.NODE_ENV === 'production') {
