@@ -2756,6 +2756,21 @@ app.use((err, req, res, next) => {
 });
 
 // ======================
+// Catch-all handler for React routing (production only)
+// ======================
+if (process.env.NODE_ENV === 'production') {
+  // Use middleware approach to handle React routing - more compatible with Express 5
+  app.use((req, res, next) => {
+    // Skip API routes and static files
+    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/') || req.path.includes('.')) {
+      return next();
+    }
+    // Serve React app for all other routes
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+  });
+}
+
+// ======================
 // Server Startup
 // ======================
 const PORT = process.env.PORT || 5000;
@@ -2809,13 +2824,6 @@ const PORT = process.env.PORT || 5000;
       name: "ComplianceReportTextSearchIndex"
     });
     await db.collection('ComplianceReports').createIndex({ date: -1 });
-
-    // Catch-all handler: send back React's index.html file for any non-API routes
-    if (process.env.NODE_ENV === 'production') {
-      app.get('*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-      });
-    }
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
