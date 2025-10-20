@@ -1,4 +1,4 @@
 # Frontend Environment Variables for Vercel
 # Add these in your Vercel project settings
 
-REACT_APP_API_URL=https://your-backend.railway.app
+REACT_APP_API_URL=https://visort-defense-production.up.railway.app
