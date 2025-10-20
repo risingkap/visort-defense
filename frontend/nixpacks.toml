@@ -1,5 +1,5 @@
 [phases.setup]
-cmds = ["npm install"]
+cmds = ["npm install --no-package-lock"]
 
 [phases.build]
 cmds = ["CI=false npm run build"]
