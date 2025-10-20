@@ -221,21 +221,18 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Apply CORS middleware globally
-app.use(cors(corsOptions));
-
-// Ensure CORS headers are set for all requests (backup for Express 5.x compatibility)
+// Apply CORS middleware globally - handle all CORS including preflight
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   
-  // Check if the origin is in the allowed origins list
+  // Check if origin is allowed
   if (origin && corsOptions.origin.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
   }
   
   res.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
   res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
-  res.header('Access-Control-Allow-Credentials', corsOptions.credentials.toString());
   
   // Handle preflight OPTIONS requests
   if (req.method === 'OPTIONS') {
@@ -245,6 +242,9 @@ app.use((req, res, next) => {
   
   next();
 });
+
+// Also apply the cors middleware as backup
+app.use(cors(corsOptions));
 
 
 
@@ -315,15 +315,6 @@ setInterval(() => {
 // ======================
 // Authentication Endpoints
 // ======================
-
-// Handle preflight OPTIONS requests for login endpoint
-app.options('/api/auth/login', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200);
-});
 
 // POST /api/auth/login - User Login
 app.post('/api/auth/login', async (req, res) => {
