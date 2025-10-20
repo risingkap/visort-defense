@@ -190,24 +190,10 @@ const sendAnnouncementEmails = async (announcement, recipients) => {
 // ======================
 // Middleware Setup
 // ======================
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:5000"],
-      scriptSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-    },
-  },
-}));
 
+// CORS must be the FIRST middleware to avoid conflicts
 const corsOptions = {
-  origin: [
-    'https://ingenious-warmth-production-c767.up.railway.app',
-    'http://localhost:3000',
-    'http://localhost:3001'
-  ],
+  origin: true, // Allow all origins for now
   credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: [
@@ -221,30 +207,22 @@ const corsOptions = {
   optionsSuccessStatus: 200
 };
 
-// Apply CORS middleware globally - handle all CORS including preflight
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  // Check if origin is allowed
-  if (origin && corsOptions.origin.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-    res.header('Access-Control-Allow-Credentials', 'true');
-  }
-  
-  res.header('Access-Control-Allow-Methods', corsOptions.methods.join(','));
-  res.header('Access-Control-Allow-Headers', corsOptions.allowedHeaders.join(','));
-  
-  // Handle preflight OPTIONS requests
-  if (req.method === 'OPTIONS') {
-    res.status(corsOptions.optionsSuccessStatus || 200).end();
-    return;
-  }
-  
-  next();
-});
-
-// Also apply the cors middleware as backup
+// Apply CORS middleware FIRST
 app.use(cors(corsOptions));
+
+// Then apply helmet with proper CORS policy
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "http://localhost:3000", "http://localhost:5000", "https://ingenious-warmth-production-c767.up.railway.app"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: ["'self'", "https://visort-defense-production.up.railway.app", "https://ingenious-warmth-production-c767.up.railway.app"],
+    },
+  },
+}));
 
 
 
