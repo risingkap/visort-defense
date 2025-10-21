@@ -2307,7 +2307,7 @@ app.get('/api/flutter/disposals', async (req, res) => {
         binId: doc.binId,
         binType: doc.binType,
         garbageType: doc.garbageType || 'Unknown Waste',
-        imageUrl: doc.imageUrl ? `http://localhost:5000${doc.imageUrl}` : null, // Full URL for Flutter
+        imageUrl: doc.imageUrl || null, // Relative path for Flutter (same as React)
         disposalDate: doc.createdAt ? new Date(doc.createdAt).toISOString() : null,
         fileSize: doc.fileSize || 0,
         handledBy: doc.handledBy || 'ESP32 Camera',
