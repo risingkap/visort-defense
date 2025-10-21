@@ -2052,7 +2052,7 @@ app.get('/api/disposals', async (req, res) => {
 
     const query = {};
     const options = {
-      sort: { disposalDate: -1 },
+      sort: { createdAt: -1 },
       skip: (page - 1) * limit,
       limit: parseInt(limit)
     };
@@ -2215,7 +2215,7 @@ app.get('/api/flutter/disposals', async (req, res) => {
       endDate, 
       search,
       page = 1, 
-      limit = 100,
+      limit = 500,
       binId,
       types,
       requireDate,
@@ -2224,7 +2224,7 @@ app.get('/api/flutter/disposals', async (req, res) => {
 
     const query = {};
     const options = {
-      sort: { disposalDate: -1 },
+      sort: { createdAt: -1 },
       skip: (page - 1) * limit,
       limit: parseInt(limit)
     };
